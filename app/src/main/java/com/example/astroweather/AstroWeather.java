@@ -1,5 +1,6 @@
 package com.example.astroweather;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -10,6 +11,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -38,9 +42,9 @@ public class AstroWeather extends AppCompatActivity {
         longitude = getIntent().getStringExtra("longitude");
         refreshTime = getIntent().getStringExtra("refreshTime");
         Toast.makeText(getBaseContext(), latitude+" "+longitude+" "+refreshTime, Toast.LENGTH_SHORT).show();
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
         if(latitude!=null && longitude!=null && refreshTime!=null) {
-            sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
             sharedViewModel.setLatitude(latitude);
             sharedViewModel.setLongitude(longitude);
             sharedViewModel.setRefreshTime(refreshTime);
@@ -49,6 +53,8 @@ public class AstroWeather extends AppCompatActivity {
         setContentView(R.layout.activity_astro_weather);
 
         position = findViewById(R.id.pos);
+        longitude = sharedViewModel.getLongitude();
+        latitude = sharedViewModel.getLatitude();
         position.setText("Latitude: "+latitude+", longitude: "+longitude);
 
         int orientation = getResources().getConfiguration().orientation;
@@ -60,17 +66,17 @@ public class AstroWeather extends AppCompatActivity {
         timer= new Thread(runnable);
         timer.start();
 
-        settings = findViewById(R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent mainActivity = new Intent(AstroWeather.this, MainActivity.class);
-                mainActivity.putExtra("latitude", latitude);
-                mainActivity.putExtra("longitude", longitude);
-                mainActivity.putExtra("refreshTime", refreshTime);
-                startActivity(mainActivity);
-            }
-        });
+//        settings = findViewById(R.id.settings);
+//        settings.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                Intent mainActivity = new Intent(AstroWeather.this, MainActivity.class);
+//                mainActivity.putExtra("latitude", latitude);
+//                mainActivity.putExtra("longitude", longitude);
+//                mainActivity.putExtra("refreshTime", refreshTime);
+//                startActivity(mainActivity);
+//            }
+//        });
 
         if(orientation == Configuration.ORIENTATION_PORTRAIT && tabletSize == false) {
             viewPager2 = findViewById(R.id.viewPager);
@@ -117,6 +123,36 @@ public class AstroWeather extends AppCompatActivity {
                 }catch(Exception e){
                 }
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+       inflater.inflate(R.menu.uppermenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.favorite_place:{
+                Toast.makeText(this, "FavoritePlace", Toast.LENGTH_LONG).show();
+                return true;
+            }
+            case R.id.refreshButton:{
+                Toast.makeText(this, "Refresh", Toast.LENGTH_LONG).show();
+                return true;
+            }
+            case R.id.settings:{
+                Intent mainActivity = new Intent(AstroWeather.this, MainActivity.class);
+                mainActivity.putExtra("latitude", latitude);
+                mainActivity.putExtra("longitude", longitude);
+                mainActivity.putExtra("refreshTime", refreshTime);
+                startActivity(mainActivity);
+                return true;
+            }
+            default: return super.onOptionsItemSelected(item);
         }
     }
 }
