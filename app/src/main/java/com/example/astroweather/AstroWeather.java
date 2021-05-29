@@ -8,8 +8,11 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +41,8 @@ public class AstroWeather extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Toast.makeText(getApplicationContext(), "CONNECTION TO NET->"+isNetworkAvailable()+"|", Toast.LENGTH_SHORT).show();
+
         latitude = getIntent().getStringExtra("latitude");
         longitude = getIntent().getStringExtra("longitude");
         refreshTime = getIntent().getStringExtra("refreshTime");
@@ -65,18 +70,6 @@ public class AstroWeather extends AppCompatActivity {
         Runnable runnable = new CurrentTimeRunner();
         timer= new Thread(runnable);
         timer.start();
-
-//        settings = findViewById(R.id.settings);
-//        settings.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                Intent mainActivity = new Intent(AstroWeather.this, MainActivity.class);
-//                mainActivity.putExtra("latitude", latitude);
-//                mainActivity.putExtra("longitude", longitude);
-//                mainActivity.putExtra("refreshTime", refreshTime);
-//                startActivity(mainActivity);
-//            }
-//        });
 
         if(orientation == Configuration.ORIENTATION_PORTRAIT && tabletSize == false) {
             viewPager2 = findViewById(R.id.viewPager);
@@ -137,7 +130,9 @@ public class AstroWeather extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.favorite_place:{
-                Toast.makeText(this, "FavoritePlace", Toast.LENGTH_LONG).show();
+                Intent favoritePlacesActivity = new Intent(AstroWeather.this, FavoritePlaces.class);
+
+                startActivity(favoritePlacesActivity);
                 return true;
             }
             case R.id.refreshButton:{
@@ -154,5 +149,11 @@ public class AstroWeather extends AppCompatActivity {
             }
             default: return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

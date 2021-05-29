@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AstroWeather">
         <activity android:name=".MainActivity"></activity>
+        <activity android:name=".FavoritePlaces"></activity>
         <activity android:name=".AstroWeather">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

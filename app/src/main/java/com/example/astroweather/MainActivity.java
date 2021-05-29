@@ -1,6 +1,7 @@
 package com.example.astroweather;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String value;
     private EditText latitude;
     private EditText longitude;
+    private SharedViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         latitude.setText(latitude2);
         longitude.setText(longitude2);
-
-        Toast.makeText(getApplicationContext(), "CONNECTION TO NET->"+isNetworkAvailable()+"|", Toast.LENGTH_SHORT).show();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,13 +103,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 }
