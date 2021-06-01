@@ -31,6 +31,27 @@
 
         <TableRow
             android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/cityNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="city" />
+
+            <EditText
+                android:id="@+id/editCityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="@string/city" />
+
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
@@ -45,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="numberDecimal|numberSigned"
-                android:text="51" />
+                android:text="51.41" />
         </TableRow>
 
         <TableRow
@@ -64,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="numberDecimal|numberSigned"
-                android:text="22" />
+                android:text="21.15" />
 
         </TableRow>
 

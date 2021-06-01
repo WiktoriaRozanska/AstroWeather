@@ -2,7 +2,6 @@ package com.example.astroweather;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,14 +16,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class AstroWeather extends AppCompatActivity {
 
@@ -33,7 +31,10 @@ public class AstroWeather extends AppCompatActivity {
     protected TextView time, position;
     private String latitude, longitude;
     private String refreshTime;
+    private String city;
     private Button settings;
+    private ArrayList<String> arrayOfPlaces = new ArrayList<>();
+    DatabaseHelper mDataBaseHelper;
 
     private SharedViewModel sharedViewModel;
 
@@ -46,13 +47,16 @@ public class AstroWeather extends AppCompatActivity {
         latitude = getIntent().getStringExtra("latitude");
         longitude = getIntent().getStringExtra("longitude");
         refreshTime = getIntent().getStringExtra("refreshTime");
+        city = getIntent().getStringExtra("city");
         Toast.makeText(getBaseContext(), latitude+" "+longitude+" "+refreshTime, Toast.LENGTH_SHORT).show();
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        mDataBaseHelper = new DatabaseHelper(this);
 
-        if(latitude!=null && longitude!=null && refreshTime!=null) {
+        if(latitude!=null && longitude!=null && refreshTime!=null && city!=null) {
             sharedViewModel.setLatitude(latitude);
             sharedViewModel.setLongitude(longitude);
             sharedViewModel.setRefreshTime(refreshTime);
+            sharedViewModel.setCity(city);
         }
 
         setContentView(R.layout.activity_astro_weather);
@@ -60,6 +64,7 @@ public class AstroWeather extends AppCompatActivity {
         position = findViewById(R.id.pos);
         longitude = sharedViewModel.getLongitude();
         latitude = sharedViewModel.getLatitude();
+        city = sharedViewModel.getCity();
         position.setText("Latitude: "+latitude+", longitude: "+longitude);
 
         int orientation = getResources().getConfiguration().orientation;
@@ -131,12 +136,24 @@ public class AstroWeather extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.favorite_place:{
                 Intent favoritePlacesActivity = new Intent(AstroWeather.this, FavoritePlaces.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("listOfPlaces", arrayOfPlaces);
+                favoritePlacesActivity.putExtras(bundle);
 
                 startActivity(favoritePlacesActivity);
                 return true;
             }
             case R.id.refreshButton:{
                 Toast.makeText(this, "Refresh", Toast.LENGTH_LONG).show();
+                return true;
+            }
+            case R.id.starButton:{
+                arrayOfPlaces = sharedViewModel.getPlaces();
+                arrayOfPlaces.add(city + " ("+latitude+","+longitude+")");
+                sharedViewModel.setArrayOfFavouritePlaces(arrayOfPlaces);
+                addDataToDB(city, latitude, longitude);
+
+                Toast.makeText(this, "Add to my favourite", Toast.LENGTH_LONG).show();
                 return true;
             }
             case R.id.settings:{
@@ -155,5 +172,19 @@ public class AstroWeather extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void addDataToDB(String city, String latitude, String longitude){
+        boolean res = mDataBaseHelper.addData(city, latitude, longitude);
+
+        if(res==false){
+            toastMsg("add data to DB finish with false");
+        }
+        else
+            toastMsg("add data to DB finish with true");
+    }
+
+    private void toastMsg(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 }

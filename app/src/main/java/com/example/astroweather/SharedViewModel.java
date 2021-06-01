@@ -3,10 +3,15 @@ package com.example.astroweather;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class SharedViewModel extends ViewModel {
-    private final MutableLiveData<String> longitude = new MutableLiveData<String>("55");
-    private final MutableLiveData<String> latitude = new MutableLiveData<String>("20");
+    private final MutableLiveData<String> city = new MutableLiveData<>("Radom");
+    private final MutableLiveData<String> longitude = new MutableLiveData<String>("51.41");
+    private final MutableLiveData<String> latitude = new MutableLiveData<String>("21.15");
     private final MutableLiveData<String> refreshTime = new MutableLiveData<String>("1 sec");
+    private final MutableLiveData<ArrayList<String>> arrayOfFavouritePlaces = new MutableLiveData<>(new ArrayList<>());
 
     public void setLongitude(String longitude) {
         this.longitude.setValue(longitude);
@@ -20,6 +25,10 @@ public class SharedViewModel extends ViewModel {
         this.refreshTime.setValue(refreshTime);
     }
 
+    public void setCity(String city) { this.city.setValue(city); }
+
+    public void setArrayOfFavouritePlaces(ArrayList<String> array) { this.arrayOfFavouritePlaces.setValue(array); }
+
     public String getLatitude() {
         return latitude.getValue();
     }
@@ -31,4 +40,8 @@ public class SharedViewModel extends ViewModel {
     public String getRefreshTime() {
         return refreshTime.getValue();
     }
+
+    public String getCity() { return city.getValue(); }
+
+    public ArrayList<String> getPlaces() { return arrayOfFavouritePlaces.getValue();}
 }

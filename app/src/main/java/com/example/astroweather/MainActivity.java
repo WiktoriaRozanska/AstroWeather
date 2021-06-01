@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String value;
     private EditText latitude;
     private EditText longitude;
+    private EditText city;
     private SharedViewModel sharedViewModel;
 
     @Override
@@ -39,11 +40,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         String latitude2 = getIntent().getStringExtra("latitude");
         String longitude2 = getIntent().getStringExtra("longitude");
+        String city2 = getIntent().getStringExtra("city");
         latitude = findViewById(R.id.latitudeNumber);
         longitude =findViewById(R.id.longitudeNumber);
+        city = findViewById(R.id.editCityName);
 
         latitude.setText(latitude2);
         longitude.setText(longitude2);
+        city.setText(city2);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent astroWeather = new Intent(MainActivity.this, AstroWeather.class);
                 astroWeather.putExtra("latitude", latitude.getText().toString());
                 astroWeather.putExtra("longitude", longitude.getText().toString());
+                astroWeather.putExtra("city", city.getText().toString());
                 astroWeather.putExtra("refreshTime", value);
                 startActivity(astroWeather);
 
@@ -85,10 +90,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String la = getIntent().getStringExtra("latitude");
                 String lo = getIntent().getStringExtra("longitude");
                 String time = getIntent().getStringExtra("refreshTime");
+                String city = getIntent().getStringExtra("city");
                 Intent astroWeather = new Intent(MainActivity.this, AstroWeather.class);
                 astroWeather.putExtra("latitude", la);
                 astroWeather.putExtra("longitude", lo);
                 astroWeather.putExtra("refreshTime", time);
+                astroWeather.putExtra("city", city);
                 startActivity(astroWeather);
 
             }
