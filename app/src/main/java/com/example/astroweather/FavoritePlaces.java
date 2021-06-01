@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class FavoritePlaces extends AppCompatActivity {
     ListView listOfFavoritePlaces;
     private ArrayList<String> arrayOfPlaces = new ArrayList<>(0);
-    private static final String TAG = "ListDataActivity";
     DatabaseHelper databaseHelper;
 
     @Override
@@ -24,8 +23,6 @@ public class FavoritePlaces extends AppCompatActivity {
         setContentView(R.layout.favorite_places);
 
         databaseHelper = new DatabaseHelper(this);
-        Bundle bundle = this.getIntent().getExtras();
-//        arrayOfPlaces = bundle.getStringArrayList("listOfPlaces");
 
         getDataFromDbToArray();
 
@@ -38,6 +35,7 @@ public class FavoritePlaces extends AppCompatActivity {
         listOfFavoritePlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                load mainActivity (AstroWeatherActivity) witch chosen data
                 Toast.makeText(FavoritePlaces.this, "clicked id: "+position+" "+arrayOfPlaces.get(position), Toast.LENGTH_SHORT).show();
             }
         });
@@ -46,8 +44,7 @@ public class FavoritePlaces extends AppCompatActivity {
     private void getDataFromDbToArray() {
         Cursor data = databaseHelper.getData();
 
-        while (data.moveToNext()){
+        while (data.moveToNext())
             arrayOfPlaces.add(data.getString(1)+"("+data.getString(2)+", "+data.getString(3)+")");
-        }
     }
 }

@@ -41,31 +41,22 @@ public class AstroWeather extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_astro_weather);
 
-        Toast.makeText(getApplicationContext(), "CONNECTION TO NET->"+isNetworkAvailable()+"|", Toast.LENGTH_SHORT).show();
+        loadDataFromIntent();
 
-        latitude = getIntent().getStringExtra("latitude");
-        longitude = getIntent().getStringExtra("longitude");
-        refreshTime = getIntent().getStringExtra("refreshTime");
-        city = getIntent().getStringExtra("city");
-        Toast.makeText(getBaseContext(), latitude+" "+longitude+" "+refreshTime, Toast.LENGTH_SHORT).show();
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         mDataBaseHelper = new DatabaseHelper(this);
 
         if(latitude!=null && longitude!=null && refreshTime!=null && city!=null) {
-            sharedViewModel.setLatitude(latitude);
-            sharedViewModel.setLongitude(longitude);
-            sharedViewModel.setRefreshTime(refreshTime);
-            sharedViewModel.setCity(city);
+            setDataToSharedViewModel();
         }
 
-        setContentView(R.layout.activity_astro_weather);
-
         position = findViewById(R.id.pos);
-        longitude = sharedViewModel.getLongitude();
-        latitude = sharedViewModel.getLatitude();
-        city = sharedViewModel.getCity();
-        position.setText("Latitude: "+latitude+", longitude: "+longitude);
+
+        getDataFromSharedViewModel();
+
+        position.setText(city+" ("+latitude+", "+longitude+")");
 
         int orientation = getResources().getConfiguration().orientation;
         boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
@@ -84,6 +75,26 @@ public class AstroWeather extends AppCompatActivity {
         else if (tabletSize == false){
             setFragments(new SunFragment(), new MoonFragment());
         }
+    }
+
+    private void getDataFromSharedViewModel() {
+        longitude = sharedViewModel.getLongitude();
+        latitude = sharedViewModel.getLatitude();
+        city = sharedViewModel.getCity();
+    }
+
+    private void setDataToSharedViewModel() {
+        sharedViewModel.setLatitude(latitude);
+        sharedViewModel.setLongitude(longitude);
+        sharedViewModel.setRefreshTime(refreshTime);
+        sharedViewModel.setCity(city);
+    }
+
+    private void loadDataFromIntent() {
+        latitude = getIntent().getStringExtra("latitude");
+        longitude = getIntent().getStringExtra("longitude");
+        refreshTime = getIntent().getStringExtra("refreshTime");
+        city = getIntent().getStringExtra("city");
     }
 
     private void setFragments(SunFragment sunFragment, MoonFragment moonFragment) {

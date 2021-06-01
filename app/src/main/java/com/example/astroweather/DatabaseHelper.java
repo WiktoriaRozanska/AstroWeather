@@ -12,10 +12,9 @@ import androidx.annotation.Nullable;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
     private static final String TABLE_NAME = "location_table";
-    private static final String COL1 = "ID";
-    private static final String COL2 = "Localization";
-    private static final String COL3 = "Latitude";
-    private static final String COL4 = "Longitude";
+    private static final String COL1 = "Localization";
+    private static final String COL2 = "Latitude";
+    private static final String COL3 = "Longitude";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, TABLE_NAME, null, 1);
@@ -23,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE "+TABLE_NAME+" (ID INTEGER PRIMARY KEY AUTOINCREMENT, "+COL2 +" TEXT, "+COL3+" TEXT, "+COL4+" TEXT, UNIQUE("+ COL3+","+COL4+") ON CONFLICT REPLACE)";
+        String createTable = "CREATE TABLE "+TABLE_NAME+" (ID INTEGER PRIMARY KEY AUTOINCREMENT, "+COL1 +" TEXT, "+COL2+" TEXT, "+COL3+" TEXT, UNIQUE("+ COL2+","+COL3+") ON CONFLICT REPLACE)";
         db.execSQL(createTable);
     }
 
@@ -36,9 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean addData(String city, String latitude, String longitude){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2, city);
-        contentValues.put(COL3, latitude);
-        contentValues.put(COL4, longitude);
+        contentValues.put(COL1, city);
+        contentValues.put(COL2, latitude);
+        contentValues.put(COL3, longitude);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
 
