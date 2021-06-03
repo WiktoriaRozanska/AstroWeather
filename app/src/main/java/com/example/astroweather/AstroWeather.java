@@ -48,8 +48,12 @@ public class AstroWeather extends AppCompatActivity {
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         mDataBaseHelper = new DatabaseHelper(this);
 
-        if(latitude!=null && longitude!=null && refreshTime!=null && city!=null) {
+        if(latitude!=null && longitude!=null && city!=null) {
             setDataToSharedViewModel();
+        }
+
+        if(refreshTime!=null){
+            sharedViewModel.setRefreshTime(refreshTime);
         }
 
         position = findViewById(R.id.pos);
@@ -86,7 +90,6 @@ public class AstroWeather extends AppCompatActivity {
     private void setDataToSharedViewModel() {
         sharedViewModel.setLatitude(latitude);
         sharedViewModel.setLongitude(longitude);
-        sharedViewModel.setRefreshTime(refreshTime);
         sharedViewModel.setCity(city);
     }
 
@@ -147,10 +150,6 @@ public class AstroWeather extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.favorite_place:{
                 Intent favoritePlacesActivity = new Intent(AstroWeather.this, FavoritePlaces.class);
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("listOfPlaces", arrayOfPlaces);
-                favoritePlacesActivity.putExtras(bundle);
-
                 startActivity(favoritePlacesActivity);
                 return true;
             }

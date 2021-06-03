@@ -1,5 +1,6 @@
 package com.example.astroweather;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +38,15 @@ public class FavoritePlaces extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                load mainActivity (AstroWeatherActivity) witch chosen data
                 Toast.makeText(FavoritePlaces.this, "clicked id: "+position+" "+arrayOfPlaces.get(position), Toast.LENGTH_SHORT).show();
+                Intent favoritePlacesActivity = new Intent(FavoritePlaces.this, AstroWeather.class);
+                Bundle bundle = new Bundle();
+                String[] tab = arrayOfPlaces.get(position).split("[(),]");
+                bundle.putString("city", tab[0]);
+                bundle.putString("longitude", tab[2]);
+                bundle.putString("latitude", tab[1]);
+                favoritePlacesActivity.putExtras(bundle);
+
+                startActivity(favoritePlacesActivity);
             }
         });
     }
@@ -45,6 +55,6 @@ public class FavoritePlaces extends AppCompatActivity {
         Cursor data = databaseHelper.getData();
 
         while (data.moveToNext())
-            arrayOfPlaces.add(data.getString(1)+"("+data.getString(2)+", "+data.getString(3)+")");
+            arrayOfPlaces.add(data.getString(1)+"("+data.getString(2)+","+data.getString(3)+")");
     }
 }
