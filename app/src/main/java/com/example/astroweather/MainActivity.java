@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,12 +18,28 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private String value;
     private EditText latitude;
     private EditText longitude;
     private EditText city;
     private SharedViewModel sharedViewModel;
+    private final String API_KEY = "d9a1946fc8a52ae928c8165a706be683";
+    private String baseURL = "https://api.openweathermap.org/data/2.5/weather?";
+    private RequestQueue requestQueue;
+    private AtomicBoolean flag = new AtomicBoolean(true);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(this);
+        requestQueue = Volley.newRequestQueue(this);
 
         Button button = findViewById(R.id.show);
         Button cancel = findViewById(R.id.cancel);
@@ -100,6 +119,140 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
         });
+
+        city.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()!=0 && flag.get()){
+                    findCityByName(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
+        latitude.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()!=0 && flag.get()){
+                    findCityByLat(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        longitude.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()!=0 && flag.get()){
+                    findCityByLon(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void findCityByLat(String lat) {
+        String url = baseURL +"lat="+lat+"&lon="+longitude.getText().toString()+"&appid="+API_KEY;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    flag.set(false);
+                    JSONObject jsonObject = response.getJSONObject("coord");
+                    String lat = jsonObject.getString("lat");
+                    String name = response.getString("name");
+
+                    city.setText(name);
+                    latitude.setText(lat);
+                    flag.set(true);
+
+                } catch (JSONException e) {
+                    flag.set(true);
+                    Toast.makeText(getBaseContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, error -> {
+            flag.set(true);
+            Toast.makeText(getBaseContext(), "City not found", Toast.LENGTH_SHORT).show();
+        });
+
+        requestQueue.add(request);
+    }
+
+    private void findCityByLon(String lon) {
+        String url = baseURL +"lon="+lon+"&lat="+latitude.getText().toString()+"&appid="+API_KEY;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    flag.set(false);
+                    JSONObject jsonObject = response.getJSONObject("coord");
+                    String lon = jsonObject.getString("lon");
+                    String name = response.getString("name");
+
+                    city.setText(name);
+                    longitude.setText(lon);
+                    flag.set(true);
+
+                } catch (JSONException e) {
+                    Toast.makeText(getBaseContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
+                    flag.set(true);
+                }
+            }
+        }, error -> {
+            flag.set(true);
+            Toast.makeText(getBaseContext(), "City not found", Toast.LENGTH_SHORT).show();
+        });
+
+        requestQueue.add(request);
+    }
+
+    private void findCityByName(String name){
+        String url = baseURL +"q="+name+"&appid="+API_KEY;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    flag.set(false);
+                    JSONObject jsonObject = response.getJSONObject("coord");
+                    String lon = jsonObject.getString("lon");
+                    String lat = jsonObject.getString("lat");
+
+                    latitude.setText(lat);
+                    longitude.setText(lon);
+                    flag.set(true);
+
+                } catch (JSONException e) {
+                    flag.set(true);
+                    Toast.makeText(getBaseContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, error -> {
+            flag.set(true);
+            Toast.makeText(getBaseContext(), "City not found", Toast.LENGTH_SHORT).show();
+        });
+
+        requestQueue.add(request);
     }
 
     @Override

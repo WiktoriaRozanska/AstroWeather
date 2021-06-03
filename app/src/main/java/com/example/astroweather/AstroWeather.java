@@ -172,6 +172,7 @@ public class AstroWeather extends AppCompatActivity {
                 mainActivity.putExtra("latitude", latitude);
                 mainActivity.putExtra("longitude", longitude);
                 mainActivity.putExtra("refreshTime", refreshTime);
+                mainActivity.putExtra("city", city);
                 startActivity(mainActivity);
                 return true;
             }
