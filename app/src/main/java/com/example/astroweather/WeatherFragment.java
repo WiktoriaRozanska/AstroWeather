@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -62,14 +63,12 @@ public class WeatherFragment extends Fragment {
                         JSONObject weatherJsonObject = weatherJsonArray.getJSONObject(0);
                         JSONObject windJsonObject = response.getJSONObject("wind");
 
-                        String url = "http://openweathermap.org/img/wn/"+weatherJsonObject.getString("icon")+"@2x.png";
-//                        url = "https://picsum.photos/600";
+                        String imgUrl = "https://openweathermap.org/img/wn/"+weatherJsonObject.getString("icon")+"@4x.png";
                         Glide
                                 .with(getContext())
-                                .load(url)
+                                .load(imgUrl)
                                 .override(50,50)
                                 .into(imageView);
-
 
                         weather.setText("Current weather: "+weatherJsonObject.get("main"));
                         description.setText("Description: "+weatherJsonObject.getString("description"));
