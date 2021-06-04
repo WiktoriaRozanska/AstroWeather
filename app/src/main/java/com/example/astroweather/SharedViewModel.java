@@ -11,6 +11,7 @@ public class SharedViewModel extends ViewModel {
     private final MutableLiveData<String> longitude = new MutableLiveData<String>("21.1471");
     private final MutableLiveData<String> latitude = new MutableLiveData<String>("51.4025");
     private final MutableLiveData<String> refreshTime = new MutableLiveData<String>("1 sec");
+    private final MutableLiveData<String> units = new MutableLiveData<>("standard");
     private final MutableLiveData<ArrayList<String>> arrayOfFavouritePlaces = new MutableLiveData<>(new ArrayList<>());
 
     public void setLongitude(String longitude) {
@@ -27,6 +28,8 @@ public class SharedViewModel extends ViewModel {
 
     public void setCity(String city) { this.city.setValue(city); }
 
+    public void setUnits(String units) { this.units.setValue(units); }
+
     public void setArrayOfFavouritePlaces(ArrayList<String> array) { this.arrayOfFavouritePlaces.setValue(array); }
 
     public String getLatitude() {
@@ -42,6 +45,8 @@ public class SharedViewModel extends ViewModel {
     }
 
     public String getCity() { return city.getValue(); }
+
+    public String getUnits() { return units.getValue(); }
 
     public ArrayList<String> getPlaces() { return arrayOfFavouritePlaces.getValue();}
 }

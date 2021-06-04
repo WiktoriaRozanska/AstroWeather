@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private String value;
+    private String units;
     private EditText latitude;
     private EditText longitude;
     private EditText city;
@@ -52,6 +53,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(this);
+
+        Spinner spinner1 = findViewById(R.id.spinnerForUnits);
+        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this, R.array.units, android.R.layout.simple_spinner_item);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner1.setAdapter(adapter1);
+
+        spinner1.setOnItemSelectedListener(this);
+
         requestQueue = Volley.newRequestQueue(this);
 
         Button button = findViewById(R.id.show);
@@ -115,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 astroWeather.putExtra("longitude", lo);
                 astroWeather.putExtra("refreshTime", time);
                 astroWeather.putExtra("city", city);
+                astroWeather.putExtra("units", units);
                 startActivity(astroWeather);
 
             }
@@ -258,8 +268,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String text = parent.getItemAtPosition(position).toString();
-        value = text;
-        Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT).show();
+        if(text.equals("standard") || text.equals("metric") || text.equals("imperial")){
+            units = text;
+            Toast.makeText(parent.getContext(), "UNITS-> "+text, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            value = text;
+            Toast.makeText(parent.getContext(), "RT->"+text, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

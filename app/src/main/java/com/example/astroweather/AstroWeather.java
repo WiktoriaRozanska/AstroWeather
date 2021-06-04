@@ -32,6 +32,7 @@ public class AstroWeather extends AppCompatActivity {
     private String latitude, longitude;
     private String refreshTime;
     private String city;
+    private String units;
     private Button settings;
     private ArrayList<String> arrayOfPlaces = new ArrayList<>();
     DatabaseHelper mDataBaseHelper;
@@ -85,12 +86,14 @@ public class AstroWeather extends AppCompatActivity {
         longitude = sharedViewModel.getLongitude();
         latitude = sharedViewModel.getLatitude();
         city = sharedViewModel.getCity();
+        units = sharedViewModel.getUnits();
     }
 
     private void setDataToSharedViewModel() {
         sharedViewModel.setLatitude(latitude);
         sharedViewModel.setLongitude(longitude);
         sharedViewModel.setCity(city);
+        sharedViewModel.setUnits(units);
     }
 
     private void loadDataFromIntent() {
@@ -98,6 +101,7 @@ public class AstroWeather extends AppCompatActivity {
         longitude = getIntent().getStringExtra("longitude");
         refreshTime = getIntent().getStringExtra("refreshTime");
         city = getIntent().getStringExtra("city");
+        units = getIntent().getStringExtra("units");
     }
 
     private void setFragments(SunFragment sunFragment, MoonFragment moonFragment) {
