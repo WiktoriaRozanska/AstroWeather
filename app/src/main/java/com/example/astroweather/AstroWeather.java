@@ -77,6 +77,9 @@ public class AstroWeather extends AppCompatActivity {
             pagerAdapter = new MainPagerAdapter(this);
             viewPager2.setAdapter(pagerAdapter);
         }
+        else if(orientation == Configuration.ORIENTATION_LANDSCAPE && tabletSize == false){
+
+        }
         else if (tabletSize == false){
             setFragments(new SunFragment(), new MoonFragment());
         }

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class SharedViewModel extends ViewModel {
     private final MutableLiveData<String> city = new MutableLiveData<>("Radom");
-    private final MutableLiveData<String> longitude = new MutableLiveData<String>("21.1471");
-    private final MutableLiveData<String> latitude = new MutableLiveData<String>("51.4025");
-    private final MutableLiveData<String> refreshTime = new MutableLiveData<String>("1 sec");
+    private final MutableLiveData<String> longitude = new MutableLiveData<String>("51.4025");
+    private final MutableLiveData<String> latitude = new MutableLiveData<String>("21.1471");
+    private final MutableLiveData<String> refreshTime = new MutableLiveData<String>("15 min");
     private final MutableLiveData<String> units = new MutableLiveData<>("standard");
     private final MutableLiveData<ArrayList<String>> arrayOfFavouritePlaces = new MutableLiveData<>(new ArrayList<>());
 

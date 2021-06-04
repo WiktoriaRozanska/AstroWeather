@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 astroWeather.putExtra("longitude", longitude.getText().toString());
                 astroWeather.putExtra("city", city.getText().toString());
                 astroWeather.putExtra("refreshTime", value);
+                astroWeather.putExtra("units", units);
                 startActivity(astroWeather);
 
             }

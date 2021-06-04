@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WeatherFragment"
+    android:background="#6D8BC34A">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#8BC34A"
+            android:gravity="center_horizontal"
+            android:text="Current weather"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/weather"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="will be main weather"
+            android:textSize="15sp"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="will be description"
+            android:textSize="15sp"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/visibility"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="will be visibility"
+            android:textSize="15sp"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/windSpeed"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="will be wind speed"
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/windDeg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="will be wind deg"
+            android:textSize="15sp"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
+
+</FrameLayout>

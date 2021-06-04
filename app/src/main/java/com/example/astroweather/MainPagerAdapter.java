@@ -16,14 +16,17 @@ public class MainPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 1)
-            return new MoonFragment();
-
-        return new SunFragment();
+        if(position == 0)
+            return new WeatherFragment();
+        else if (position == 1)
+            return new TemperatureFragment();
+        else if (position == 2)
+            return new SunFragment();
+        return new MoonFragment();
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 4;
     }
 }
