@@ -36,7 +36,7 @@ public class FavoritePlaces extends AppCompatActivity {
         listOfFavoritePlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(FavoritePlaces.this, "clicked id: "+position+" "+arrayOfPlaces.get(position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(FavoritePlaces.this, "clicked id: "+position+" "+arrayOfPlaces.get(position), Toast.LENGTH_SHORT).show();
                 Intent favoritePlacesActivity = new Intent(FavoritePlaces.this, AstroWeather.class);
                 Bundle bundle = new Bundle();
                 String[] tab = arrayOfPlaces.get(position).split("[(),]");

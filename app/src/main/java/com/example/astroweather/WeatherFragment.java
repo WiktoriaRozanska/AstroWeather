@@ -1,5 +1,8 @@
 package com.example.astroweather;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -26,7 +29,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public class WeatherFragment extends Fragment {
@@ -52,8 +59,28 @@ public class WeatherFragment extends Fragment {
             else
                 refresT *= 1_000;
 
-            //todo: get data from api
             String url = baseURL +"lat="+longitude+"&lon="+latitude+"&appid="+API_KEY+"&units="+units;
+
+            if(isNetworkAvailable()!=true)
+            {
+                try {
+                    imageView.setImageResource(R.drawable.ic_wifi_off_24);
+
+                    JSONObject response  = readJson(getContext(), "weather.json");
+                    JSONArray weatherJsonArray = response.getJSONArray("weather");
+                    JSONObject weatherJsonObject = weatherJsonArray.getJSONObject(0);
+                    JSONObject windJsonObject = response.getJSONObject("wind");
+
+                    weather.setText("Current weather: "+weatherJsonObject.get("main"));
+                    description.setText("Description: "+weatherJsonObject.getString("description"));
+                    visibility.setText("Visibility: "+response.getString("visibility"));
+                    windSpeed.setText("Wind speed: "+windJsonObject.getString("speed"));
+                    windDeg.setText("Wind degree: "+windJsonObject.getString("deg"));
+                    Toast.makeText(getContext(), "Connect to Internet to have correct data", Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
@@ -70,6 +97,8 @@ public class WeatherFragment extends Fragment {
                                 .override(50,50)
                                 .into(imageView);
 
+                        writeToFile(getContext(), "weather.json", response.toString());
+
                         weather.setText("Current weather: "+weatherJsonObject.get("main"));
                         description.setText("Description: "+weatherJsonObject.getString("description"));
                         visibility.setText("Visibility: "+response.getString("visibility"));
@@ -77,11 +106,11 @@ public class WeatherFragment extends Fragment {
                         windDeg.setText("Wind degree: "+windJsonObject.getString("deg"));
 
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
                     }
                 }
             }, error -> {
-                Toast.makeText(getContext(), "City not found", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "City not found", Toast.LENGTH_SHORT).show();
             });
 
             requestQueue.add(request);
@@ -120,5 +149,37 @@ public class WeatherFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(updateData);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static void writeToFile(Context context, String fileName, String str){
+        try{
+            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fos.write(str.getBytes(),0,str.length());
+            fos.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static JSONObject readJson(Context context, String fileName) {
+        JSONObject reader = null;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(fileName)));) {
+            String line;
+            String txt = "";
+            while ((line = br.readLine()) != null) {
+                txt+=line;
+            }
+            reader = new JSONObject(txt);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return reader;
     }
 }

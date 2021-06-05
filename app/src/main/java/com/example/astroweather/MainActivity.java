@@ -100,7 +100,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     return;
                 }
 
-                Toast.makeText(getBaseContext(), "Everything ok", Toast.LENGTH_SHORT).show();
+                if(isNetworkAvailable()!=true){
+                    Toast.makeText(getBaseContext(), "You must be connect to the Internet to save settings", Toast.LENGTH_SHORT).show();
+                }
 
                 Intent astroWeather = new Intent(MainActivity.this, AstroWeather.class);
                 astroWeather.putExtra("latitude", latitude.getText().toString());
@@ -271,14 +273,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String text = parent.getItemAtPosition(position).toString();
         if(text.equals("standard") || text.equals("metric") || text.equals("imperial")){
             units = text;
-            Toast.makeText(parent.getContext(), "UNITS-> "+text, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(parent.getContext(), "UNITS-> "+text, Toast.LENGTH_SHORT).show();
         }
         else {
             value = text;
-            Toast.makeText(parent.getContext(), "RT->"+text, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(parent.getContext(), "RT->"+text, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

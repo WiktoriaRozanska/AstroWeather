@@ -17,10 +17,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -164,6 +175,8 @@ public class AstroWeather extends AppCompatActivity {
             }
             case R.id.refreshButton:{
                 Toast.makeText(this, "Refresh", Toast.LENGTH_LONG).show();
+                finish();
+                startActivity(getIntent());
                 return true;
             }
             case R.id.starButton:{
@@ -172,7 +185,7 @@ public class AstroWeather extends AppCompatActivity {
                 sharedViewModel.setArrayOfFavouritePlaces(arrayOfPlaces);
                 addDataToDB(city, latitude, longitude);
 
-                Toast.makeText(this, "Add to my favourite", Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "Add to my favourite", Toast.LENGTH_LONG).show();
                 return true;
             }
             case R.id.settings:{
@@ -188,21 +201,48 @@ public class AstroWeather extends AppCompatActivity {
         }
     }
 
+    private void addDataToDB(String city, String latitude, String longitude){
+        boolean res = mDataBaseHelper.addData(city, latitude, longitude);
+
+//        if(res==false){
+//            toastMsg("add data to DB finish with false");
+//        }
+//        else
+//            toastMsg("add data to DB finish with true");
+    }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void addDataToDB(String city, String latitude, String longitude){
-        boolean res = mDataBaseHelper.addData(city, latitude, longitude);
-
-        if(res==false){
-            toastMsg("add data to DB finish with false");
+    public static void writeToFile(Context context, String fileName, String str){
+        try{
+            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fos.write(str.getBytes(),0,str.length());
+            fos.close();
         }
-        else
-            toastMsg("add data to DB finish with true");
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
+
+    public static JSONObject readJson(Context context, String fileName) {
+        JSONObject reader = null;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(fileName)));) {
+            String line;
+            String txt = "";
+            while ((line = br.readLine()) != null) {
+                txt+=line;
+            }
+            reader = new JSONObject(txt);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return reader;
+    }
+
 
     private void toastMsg(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
