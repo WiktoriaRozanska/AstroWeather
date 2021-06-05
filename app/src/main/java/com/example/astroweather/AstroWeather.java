@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
@@ -27,7 +28,7 @@ import java.util.Calendar;
 public class AstroWeather extends AppCompatActivity {
 
     protected ViewPager2 viewPager2;
-    protected MainPagerAdapter pagerAdapter;
+    protected FragmentStateAdapter pagerAdapter;
     protected TextView time, position;
     private String latitude, longitude;
     private String refreshTime;
@@ -72,16 +73,26 @@ public class AstroWeather extends AppCompatActivity {
         timer= new Thread(runnable);
         timer.start();
 
-        if(orientation == Configuration.ORIENTATION_PORTRAIT && tabletSize == false) {
+        if(orientation == Configuration.ORIENTATION_PORTRAIT && tabletSize == false)
+        {
             viewPager2 = findViewById(R.id.viewPager);
             pagerAdapter = new MainPagerAdapter(this);
             viewPager2.setAdapter(pagerAdapter);
         }
-        else if(orientation == Configuration.ORIENTATION_LANDSCAPE && tabletSize == false){
-
+        else if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+            viewPager2 = findViewById(R.id.viewPager);
+            pagerAdapter = new SecondPagerAdapter(this);
+            viewPager2.setAdapter(pagerAdapter);
         }
-        else if (tabletSize == false){
-            setFragments(new SunFragment(), new MoonFragment());
+        else
+        {
+            ViewPager2 viewPager1 = findViewById(R.id.viewPager1);
+            ViewPager2 viewPager2 = findViewById(R.id.viewPager2);
+            FragmentStateAdapter fragmentStateAdapter1 = new WeatherPagerAdapter(this);
+            FragmentStateAdapter fragmentStateAdapter2 = new AstroAdapter(this);
+            viewPager1.setAdapter(fragmentStateAdapter1);
+            viewPager2.setAdapter(fragmentStateAdapter2);
         }
     }
 
@@ -105,15 +116,6 @@ public class AstroWeather extends AppCompatActivity {
         refreshTime = getIntent().getStringExtra("refreshTime");
         city = getIntent().getStringExtra("city");
         units = getIntent().getStringExtra("units");
-    }
-
-    private void setFragments(SunFragment sunFragment, MoonFragment moonFragment) {
-        FragmentManager fragmentManager =  getSupportFragmentManager();
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frameSunLayout, sunFragment);
-        fragmentTransaction.replace(R.id.frameMoonLayout, moonFragment);
-        fragmentTransaction.commit();
     }
 
     public void displayCurrentTime() {
