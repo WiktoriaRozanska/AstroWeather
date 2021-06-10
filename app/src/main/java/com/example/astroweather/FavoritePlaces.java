@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class FavoritePlaces extends AppCompatActivity {
     ListView listOfFavoritePlaces;
     private ArrayList<String> arrayOfPlaces = new ArrayList<>(0);
-    DatabaseHelper databaseHelper;
+    static DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -37,15 +37,16 @@ public class FavoritePlaces extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(FavoritePlaces.this, "clicked id: "+position+" "+arrayOfPlaces.get(position), Toast.LENGTH_SHORT).show();
-                Intent favoritePlacesActivity = new Intent(FavoritePlaces.this, AstroWeather.class);
+                Intent details = new Intent(FavoritePlaces.this, LocationDetail.class);
                 Bundle bundle = new Bundle();
                 String[] tab = arrayOfPlaces.get(position).split("[(),]");
+                bundle.putLong("id", position);
                 bundle.putString("city", tab[0]);
                 bundle.putString("longitude", tab[2]);
                 bundle.putString("latitude", tab[1]);
-                favoritePlacesActivity.putExtras(bundle);
+                details.putExtras(bundle);
 
-                startActivity(favoritePlacesActivity);
+                startActivity(details);
             }
         });
     }
