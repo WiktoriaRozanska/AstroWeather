@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Button button = findViewById(R.id.show);
         Button cancel = findViewById(R.id.cancel);
+        Button clear = findViewById(R.id.clear);
+        Button find = findViewById(R.id.find);
 
         String latitude2 = getIntent().getStringExtra("latitude");
         String longitude2 = getIntent().getStringExtra("longitude");
@@ -76,6 +78,77 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         latitude.setText(latitude2);
         longitude.setText(longitude2);
         city.setText(city2);
+
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                latitude = findViewById(R.id.latitudeNumber);
+                longitude =findViewById(R.id.longitudeNumber);
+
+                latitude.setText("");
+                longitude.setText("");
+                city.setText("");
+            }
+        });
+
+        find.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                latitude = findViewById(R.id.latitudeNumber);
+                longitude =findViewById(R.id.longitudeNumber);
+
+                if(latitude.getText().toString().equals("") || longitude.getText().toString().equals("")){
+                    Toast.makeText(getBaseContext(), "Wrong date", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Float width = Float.parseFloat(latitude.getText().toString());
+                if(width>80 || width<-80){
+                    Toast.makeText(getBaseContext(), "Wrong latitude", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Float height = Float.parseFloat(longitude.getText().toString());
+                if(height>180 || height<-180){
+                    Toast.makeText(getBaseContext(), "Wrong longitude", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(isNetworkAvailable()!=true){
+                    Toast.makeText(getBaseContext(), "You must be connect to the Internet to save settings", Toast.LENGTH_SHORT).show();
+                }
+                String url = baseURL +"lon="+latitude.getText().toString()+"&lat="+longitude.getText().toString()+"&appid="+API_KEY;
+                Intent astroWeather = new Intent(MainActivity.this, AstroWeather.class);
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            flag.set(false);
+                            JSONObject jsonObject = response.getJSONObject("coord");
+                            String lat = jsonObject.getString("lat");
+                            String lon = jsonObject.getString("lon");
+                            String name = response.getString("name");
+                            astroWeather.putExtra("city", name);
+
+                            city.setText(name);
+                            longitude.setText(lat);
+                            latitude.setText(lon);
+                            flag.set(true);
+
+                        } catch (JSONException e) {
+                            flag.set(true);
+                            Toast.makeText(getBaseContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, error -> {
+                    flag.set(true);
+                    Toast.makeText(getBaseContext(), "City not found", Toast.LENGTH_SHORT).show();
+                    return;
+                });
+
+                requestQueue.add(request);
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,14 +176,45 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if(isNetworkAvailable()!=true){
                     Toast.makeText(getBaseContext(), "You must be connect to the Internet to save settings", Toast.LENGTH_SHORT).show();
                 }
-
+                String url = baseURL +"lon="+latitude.getText().toString()+"&lat="+longitude.getText().toString()+"&appid="+API_KEY;
                 Intent astroWeather = new Intent(MainActivity.this, AstroWeather.class);
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            flag.set(false);
+                            JSONObject jsonObject = response.getJSONObject("coord");
+                            String lat = jsonObject.getString("lat");
+                            String lon = jsonObject.getString("lon");
+                            String name = response.getString("name");
+                            astroWeather.putExtra("city", name);
+
+                            city.setText(name);
+                            latitude.setText(lat);
+                            longitude.setText(lon);
+                            flag.set(true);
+
+                        } catch (JSONException e) {
+                            flag.set(true);
+                            Toast.makeText(getBaseContext(), "Something went wrong during parse JSON", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, error -> {
+                    flag.set(true);
+                    Toast.makeText(getBaseContext(), "City not found", Toast.LENGTH_SHORT).show();
+                    return;
+                });
+
+                requestQueue.add(request);
+
+
                 astroWeather.putExtra("latitude", latitude.getText().toString());
                 astroWeather.putExtra("longitude", longitude.getText().toString());
                 astroWeather.putExtra("city", city.getText().toString());
                 astroWeather.putExtra("refreshTime", value);
                 astroWeather.putExtra("units", units);
                 startActivity(astroWeather);
+
 
             }
         });
@@ -133,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
+
         city.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -148,41 +253,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void afterTextChanged(Editable s) { }
         });
 
-        latitude.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//        latitude.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if(s.length()!=0 && flag.get()){
+//                    findCityByLat(s.toString());
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()!=0 && flag.get()){
-                    findCityByLat(s.toString());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
-        longitude.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()!=0 && flag.get()){
-                    findCityByLon(s.toString());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+//        longitude.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if(s.length()!=0 && flag.get()){
+//                    findCityByLon(s.toString());
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//        });
     }
 
     private void findCityByLat(String lat) {
-        String url = baseURL +"lat="+lat+"&lon="+longitude.getText().toString()+"&appid="+API_KEY;
+        if(longitude.getText().equals(""))
+            return;
+        String url = baseURL +"lon="+lat+"&lat="+longitude.getText().toString()+"&appid="+API_KEY;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -211,6 +318,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void findCityByLon(String lon) {
+        if(latitude.getText().toString().equals(""))
+            return;
+
         String url = baseURL +"lon="+lon+"&lat="+latitude.getText().toString()+"&appid="+API_KEY;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
