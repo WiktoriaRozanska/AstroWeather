@@ -40,7 +40,10 @@ public class FavoritePlaces extends AppCompatActivity {
                 Intent details = new Intent(FavoritePlaces.this, LocationDetail.class);
                 Bundle bundle = new Bundle();
                 String[] tab = arrayOfPlaces.get(position).split("[(),]");
-                bundle.putLong("id", position);
+                Integer pos = new Integer(position);
+                String test = getId(position);
+//                bundle.putString("id", pos.toString());
+                bundle.putString("id", test);
                 bundle.putString("city", tab[0]);
                 bundle.putString("longitude", tab[2]);
                 bundle.putString("latitude", tab[1]);
@@ -56,5 +59,20 @@ public class FavoritePlaces extends AppCompatActivity {
 
         while (data.moveToNext())
             arrayOfPlaces.add(data.getString(1)+"("+data.getString(2)+","+data.getString(3)+")");
+    }
+
+    private String getId(int pos){
+        Cursor data = databaseHelper.getData();
+        String posi = "";
+        int temp = 0;
+        while (data.moveToNext()) {
+            if (temp == pos){
+                posi = data.getString(0);
+                break;
+            }
+            temp += 1;
+        }
+
+        return posi;
     }
 }

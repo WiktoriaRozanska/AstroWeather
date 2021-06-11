@@ -55,9 +55,9 @@ public class LocationDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent favoritePlaces = new Intent(LocationDetail.this, FavoritePlaces.class);
-                Long id  = getIntent().getLongExtra("id",-1);
+                String id  = getIntent().getStringExtra("id");
                 String city = getIntent().getStringExtra("city");
-                boolean res = databaseHelper.deleteData(city);
+                boolean res = databaseHelper.deleteData(id);
 //                Toast.makeText(getBaseContext(), "REult = "+res, Toast.LENGTH_LONG).show();
                 startActivity(favoritePlaces);
             }

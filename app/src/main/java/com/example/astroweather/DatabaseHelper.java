@@ -52,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = 0 ;
 
-        db.execSQL("DELETE FROM "+TABLE_NAME+" WHERE "+ COL1 +" =\""+ id+"\";");
+        db.execSQL("DELETE FROM "+TABLE_NAME+" WHERE ID =\""+ id+"\";");
 
         if (result<0)
             return false;

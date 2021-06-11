@@ -203,12 +203,6 @@ public class AstroWeather extends AppCompatActivity {
 
     private void addDataToDB(String city, String latitude, String longitude){
         boolean res = mDataBaseHelper.addData(city, latitude, longitude);
-
-//        if(res==false){
-//            toastMsg("add data to DB finish with false");
-//        }
-//        else
-//            toastMsg("add data to DB finish with true");
     }
 
     private boolean isNetworkAvailable() {
